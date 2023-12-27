@@ -1,4 +1,4 @@
-package adt
+package ds
 
 // SetQueue is a non thread-safe queue implementation that only queues unique elements.
 type SetQueue[T comparable] struct {

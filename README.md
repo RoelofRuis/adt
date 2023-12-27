@@ -1,5 +1,5 @@
-# ADTiHKAL
+# DSiHKAL
 
-##### Abstract Data Types I Have Known and Loved
+##### Data Structures I Have Known and Loved
 
-Some abstract data types for easy reuse across projects.
+Various data structures for easy reuse across projects.

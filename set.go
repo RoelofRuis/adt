@@ -1,15 +1,18 @@
-package adt
+package ds
 
 import (
 	"fmt"
 	"strings"
 )
 
+// Void is synonymous with the empty struct.
+type Void struct{}
+
 // Set is a non thread-safe set implementation.
-type Set[A comparable] map[A]struct{}
+type Set[A comparable] map[A]Void
 
 // emptyValue is a placeholder for the map values in the set.
-var emptyValue struct{}
+var emptyValue Void
 
 // NewSet creates a new set from the specified values.
 func NewSet[A comparable](values ...A) *Set[A] {

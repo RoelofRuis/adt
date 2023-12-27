@@ -1,4 +1,4 @@
-package adt
+package ds
 
 import (
 	"reflect"
@@ -13,8 +13,11 @@ func TestNewSetAndString(t *testing.T) {
 	}
 }
 
-func TestInsertAndSize(t *testing.T) {
+func TestSet_InsertAndSize(t *testing.T) {
 	set := NewSet(1, 2, 3)
+	if size := set.Size(); size != 3 {
+		t.Errorf("Size is incorrect after creation. Expected: 3, Got: %d", size)
+	}
 	set.Insert(4)
 	if size := set.Size(); size != 4 {
 		t.Errorf("Size is incorrect after insertion. Expected: 4, Got: %d", size)
@@ -77,6 +80,7 @@ func TestSet_IsSubset(t *testing.T) {
 	if !otherSet.IsSubset(*set) {
 		t.Error("Set should be a subset of the other set.")
 	}
+
 	otherSet.Insert(6)
 	if set.IsSubset(*otherSet) {
 		t.Error("Set should not be a subset after insertion.")
