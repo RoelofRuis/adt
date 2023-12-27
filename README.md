@@ -1,5 +1,5 @@
-# ADTIKAL
+# ADTiHKAL
 
-##### Abstract Data Types I've Known and Loved
+##### Abstract Data Types I Have Known and Loved
 
 Some abstract data types for easy reuse across projects.
