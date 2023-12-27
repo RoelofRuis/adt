@@ -32,6 +32,15 @@ func (s *Set[A]) Clone() *Set[A] {
 	return clone
 }
 
+// Values returns the values in the set as a slice.
+func (s *Set[A]) Values() []A {
+	values := make([]A, 0, s.Size())
+	for elem := range *s {
+		values = append(values, elem)
+	}
+	return values
+}
+
 // Intersect modifies the set by keeping only the elements that exist in both this and 'that' set.
 func (s *Set[A]) Intersect(that Set[A]) {
 	for elem := range *s {

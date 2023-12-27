@@ -24,6 +24,14 @@ func TestSet_InsertAndSize(t *testing.T) {
 	}
 }
 
+func TestSet_Values(t *testing.T) {
+	set := NewSet(1, 2, 3)
+	expectedSlice := []int{1, 2, 3}
+	if !reflect.DeepEqual(set.Values(), expectedSlice) {
+		t.Errorf("Values operation is incorrect. Expected: %v, Got: %v", expectedSlice, set.Values())
+	}
+}
+
 func TestSet_Contains(t *testing.T) {
 	set := NewSet(1, 2, 3)
 	if !set.Contains(3) {
