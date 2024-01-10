@@ -28,6 +28,7 @@ func (s *Stack[A]) Pop() (A, bool) {
 	}
 
 	item := (*s)[len(*s)-1]
+	(*s)[len(*s)-1] = zeroValue[A]()
 	*s = (*s)[:len(*s)-1]
 	return item, true
 }

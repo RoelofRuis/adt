@@ -1,81 +1,116 @@
 package ds
 
 import (
-	"reflect"
 	"testing"
 )
 
-func TestSetQueue_NewSetQueue(t *testing.T) {
-	queue := NewSetQueue[int]()
-	if !queue.IsEmpty() {
-		t.Error("Newly created SetQueue should be empty.")
-	}
-}
+func TestSetQueue_Enqueue(t *testing.T) {
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3, 2, 1}
 
-func TestSetQueue_EnqueueAndLength(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	if length := queue.Size(); length != 3 {
-		t.Errorf("Size is incorrect after Enqueue. Expected: 3, Got: %d", length)
+	for _, v := range values {
+		sq.Enqueue(v)
 	}
-}
 
-func TestSetQueue_Peek(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	elem, _ := queue.Peek()
-	if elem != 1 {
-		t.Errorf("Peek is incorrect. Expected: 1, Got: %v", elem)
+	expectedSize := 3 // Only 1, 2, and 3 should be in the queue.
+	if sq.Size() != expectedSize {
+		t.Errorf("expected queue size %d, got %d", expectedSize, sq.Size())
 	}
 }
 
 func TestSetQueue_Dequeue(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	elem := queue.Dequeue()
-	if elem != 1 {
-		t.Errorf("Dequeue is incorrect. Expected: 1, Got: %v", elem)
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3}
+
+	for _, v := range values {
+		sq.Enqueue(v)
 	}
-	if length := queue.Size(); length != 2 {
-		t.Errorf("Size is incorrect after Dequeue. Expected: 2, Got: %d", length)
+
+	for i := 0; i < len(values); i++ {
+		val, ok := sq.Dequeue()
+		if !ok || val != values[i] {
+			t.Errorf("expected %d, got %d, successful: %v", values[i], val, ok)
+		}
+	}
+
+	if !sq.IsEmpty() {
+		t.Errorf("expected queue to be empty, got size: %d", sq.Size())
 	}
 }
 
-func TestSetQueue_IsEmptyAfterDequeue(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	queue.Dequeue()
-	if queue.IsEmpty() {
-		t.Error("SetQueue should not be empty after Dequeue.")
+func TestSetQueue_Peek(t *testing.T) {
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3}
+
+	for _, v := range values {
+		sq.Enqueue(v)
+	}
+
+	peekedValue, ok := sq.Peek()
+	if !ok || peekedValue != values[0] {
+		t.Errorf("expected peek to return %d, got %d, successful: %v", values[0], peekedValue, ok)
 	}
 }
 
-func TestSetQueue_EnqueueWithDuplicates(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	queue.Enqueue(2, 3, 4)
-	if length := queue.Size(); length != 4 {
-		t.Errorf("Size is incorrect after Enqueue with duplicates. Expected: 4, Got: %d", length)
+func TestSetQueue_IsEmpty(t *testing.T) {
+	sq := NewSetQueue[int]()
+	if !sq.IsEmpty() {
+		t.Error("expected new queue to be empty")
+	}
+
+	sq.Enqueue(1)
+	if sq.IsEmpty() {
+		t.Error("expected non-empty queue")
 	}
 }
 
-func TestSetQueue_Clone(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	clone := queue.Clone()
-	if !reflect.DeepEqual(queue.queue, clone.queue) {
-		t.Error("Clone did not produce an equal SetQueue.")
+func TestSetQueue_Size(t *testing.T) {
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3, 4, 5}
+
+	for _, v := range values {
+		sq.Enqueue(v)
 	}
-	if &queue.queue == &clone.queue {
-		t.Error("Clone should create a new instance of the Elements slice.")
+
+	if sq.Size() != len(values) {
+		t.Errorf("expected size %d, got %d", len(values), sq.Size())
 	}
 }
 
 func TestSetQueue_Reset(t *testing.T) {
-	queue := NewSetQueue[int]()
-	queue.Enqueue(1, 2, 3)
-	queue.Reset()
-	if !queue.IsEmpty() {
-		t.Error("SetQueue should be empty after Reset.")
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3}
+
+	for _, v := range values {
+		sq.Enqueue(v)
+	}
+
+	sq.Reset()
+	if !sq.IsEmpty() {
+		t.Error("expected empty queue after reset")
+	}
+}
+
+func TestSetQueue_Clone(t *testing.T) {
+	sq := NewSetQueue[int]()
+	values := []int{1, 2, 3}
+
+	for _, v := range values {
+		sq.Enqueue(v)
+	}
+
+	clone := sq.Clone()
+
+	if clone.Size() != sq.Size() {
+		t.Errorf("cloned queue size %d, expected %d", clone.Size(), sq.Size())
+	}
+
+	for i, _ := range values {
+		if origVal, _ := sq.Dequeue(); origVal != i+1 {
+			t.Errorf("expected %d, got %d", i+1, origVal)
+		}
+		if cloneVal, _ := clone.Dequeue(); cloneVal != i+1 {
+			t.Errorf("expected %d, got %d in clone", i+1, cloneVal)
+		}
 	}
 }

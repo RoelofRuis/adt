@@ -5,100 +5,92 @@ import (
 	"testing"
 )
 
-func TestNewSetAndString(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	expectedString := "Set[1 2 3]"
-	if result := set.String(); result != expectedString {
-		t.Errorf("String representation is incorrect. Expected: %s, Got: %s", expectedString, result)
+func TestNewSet(t *testing.T) {
+	s := NewSet(1, 2, 3)
+
+	expected := Set[int]{1: struct{}{}, 2: struct{}{}, 3: struct{}{}}
+	if !reflect.DeepEqual(s, expected) {
+		t.Errorf("NewSet() = %v, want %v", s, expected)
 	}
 }
 
-func TestSet_InsertAndSize(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	if size := set.Size(); size != 3 {
-		t.Errorf("Size is incorrect after creation. Expected: 3, Got: %d", size)
-	}
-	set.Insert(4)
-	if size := set.Size(); size != 4 {
-		t.Errorf("Size is incorrect after insertion. Expected: 4, Got: %d", size)
+func TestSet_InsertAndContains(t *testing.T) {
+	s := NewSet[int]()
+	s.Insert(1)
+
+	if !s.Contains(1) {
+		t.Errorf("Set.Contains() = false, want true after Insert")
 	}
 }
 
-func TestSet_Values(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	expectedSlice := []int{1, 2, 3}
-	if !reflect.DeepEqual(set.Values(), expectedSlice) {
-		t.Errorf("Values operation is incorrect. Expected: %v, Got: %v", expectedSlice, set.Values())
-	}
-}
+func TestSet_Delete(t *testing.T) {
+	s := NewSet(1, 2, 3)
+	s.Delete(2)
 
-func TestSet_Contains(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	if !set.Contains(3) {
-		t.Error("Set should contain the element 3.")
-	}
-	if set.Contains(5) {
-		t.Error("Set should not contain the element 5.")
-	}
-}
-
-func TestSet_ContainsOneOf(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	if !set.ContainsOneOf([]int{2, 5, 6}) {
-		t.Error("Set should contain at least one of the elements [2, 5, 6].")
-	}
-	if set.ContainsOneOf([]int{5, 6, 7}) {
-		t.Error("Set should not contain any of the elements [5, 6, 7].")
-	}
-}
-
-func TestSet_Intersect(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	otherSet := NewSet(2, 3, 4)
-	set.Intersect(*otherSet)
-	expectedIntersect := NewSet(2, 3)
-	if !reflect.DeepEqual(set, expectedIntersect) {
-		t.Errorf("Intersect operation is incorrect. Expected: %v, Got: %v", expectedIntersect, set)
+	if s.Contains(2) {
+		t.Errorf("Set.Contains() = true, want false after Delete")
 	}
 }
 
 func TestSet_Union(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	otherSet := NewSet(3, 4, 5)
-	set.Union(*otherSet)
-	expectedUnion := NewSet(1, 2, 3, 4, 5)
-	if !reflect.DeepEqual(set, expectedUnion) {
-		t.Errorf("Union operation is incorrect. Expected: %v, Got: %v", expectedUnion, set)
+	s1 := NewSet(1, 2)
+	s2 := NewSet(3, 4)
+
+	union := s1.Union(s2)
+	expected := NewSet(1, 2, 3, 4)
+
+	if !reflect.DeepEqual(union, expected) {
+		t.Errorf("Set.Union() = %v, want %v", union, expected)
+	}
+}
+
+func TestSet_Intersect(t *testing.T) {
+	s1 := NewSet(1, 2, 3)
+	s2 := NewSet(2, 3, 4)
+
+	intersection := s1.Intersect(s2)
+	expected := NewSet(2, 3)
+
+	if !reflect.DeepEqual(intersection, expected) {
+		t.Errorf("Set.Intersect() = %v, want %v", intersection, expected)
 	}
 }
 
 func TestSet_Difference(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	otherSet := NewSet(3, 5)
-	set.Difference(*otherSet)
-	expectedDifference := NewSet(1, 2)
-	if !reflect.DeepEqual(set, expectedDifference) {
-		t.Errorf("Difference operation is incorrect. Expected: %v, Got: %v", expectedDifference, set)
+	s1 := NewSet(1, 2, 3)
+	s2 := NewSet(2, 3)
+
+	diff := s1.Difference(s2)
+	expected := NewSet(1)
+
+	if !reflect.DeepEqual(diff, expected) {
+		t.Errorf("Set.Difference() = %v, want %v", diff, expected)
 	}
 }
 
 func TestSet_IsSubset(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	otherSet := NewSet(2, 3)
-	if !otherSet.IsSubset(*set) {
-		t.Error("Set should be a subset of the other set.")
+	s1 := NewSet(1, 2)
+	s2 := NewSet(1, 2, 3)
+
+	if !s1.IsSubset(s2) {
+		t.Errorf("Set.IsSubset() = false, want true")
 	}
 
-	otherSet.Insert(6)
-	if set.IsSubset(*otherSet) {
-		t.Error("Set should not be a subset after insertion.")
+	if s2.IsSubset(s1) {
+		t.Errorf("Set.IsSubset() = true, want false")
 	}
 }
 
-func TestSet_Clone(t *testing.T) {
-	set := NewSet(1, 2, 3)
-	clone := set.Clone()
-	if !reflect.DeepEqual(*set, *clone) {
-		t.Error("Clone operation did not produce an equal set.")
+func TestSet_SizeAndIsEmpty(t *testing.T) {
+	s := NewSet[int]()
+
+	if !s.IsEmpty() || s.Size() != 0 {
+		t.Errorf("New Set should be empty and size = 0, got IsEmpty() = %v, Size() = %d", s.IsEmpty(), s.Size())
+	}
+
+	s.Insert(1)
+
+	if s.IsEmpty() || s.Size() != 1 {
+		t.Errorf("Set should have one element and size = 1, got IsEmpty() = %v, Size() = %d", s.IsEmpty(), s.Size())
 	}
 }

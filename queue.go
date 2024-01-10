@@ -42,6 +42,7 @@ func (q *Queue[A]) Dequeue() (A, bool) {
 	}
 
 	item := (*q)[0]
+	(*q)[0] = zeroValue[A]()
 	*q = (*q)[1:]
 	return item, true
 }
