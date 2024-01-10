@@ -2,31 +2,35 @@ package ds
 
 // SetQueue is a non thread-safe queue implementation that only queues unique elements.
 type SetQueue[T comparable] struct {
-	Elements []T
-	set      Set[T]
+	queue *Queue[T]
+	set   Set[T]
 }
 
 // NewSetQueue creates a new SetQueue.
 func NewSetQueue[T comparable]() *SetQueue[T] {
-	return &SetQueue[T]{set: make(Set[T])}
+	return &SetQueue[T]{
+		queue: NewQueue[T](),
+		set:   make(Set[T]),
+	}
 }
 
+// Clone creates a shallow copy of the SetQueue.
 func (q *SetQueue[T]) Clone() *SetQueue[T] {
 	clone := NewSetQueue[T]()
-	for _, elem := range q.Elements {
+	for _, elem := range *q.queue {
 		clone.Enqueue(elem)
 	}
 	return clone
 }
 
-// Length return the number of elements in the set queue.
-func (q *SetQueue[T]) Length() int {
-	return len(q.Elements)
+// Size return the number of elements in the set queue.
+func (q *SetQueue[T]) Size() int {
+	return q.queue.Size()
 }
 
 // Reset resets the set queue to an empty state.
 func (q *SetQueue[T]) Reset() {
-	q.Elements = []T{}
+	q.queue.Reset()
 	q.set = make(Set[T])
 }
 
@@ -37,33 +41,25 @@ func (q *SetQueue[T]) Enqueue(elems ...T) {
 			continue
 		}
 		q.set.Insert(elem)
-		q.Elements = append(q.Elements, elem)
+		q.queue.Enqueue(elem)
 	}
 }
 
 // IsEmpty checks if the set queue is empty.
 func (q *SetQueue[T]) IsEmpty() bool {
-	return len(q.Elements) == 0
+	return q.queue.IsEmpty()
 }
 
 // Peek returns the first element in the set queue without removing it.
-// It panics with an empty queue; use Length to check the length first.
-func (q *SetQueue[T]) Peek() T {
-	if q.IsEmpty() {
-		panic("empty SetQueue")
-	}
-	return q.Elements[0]
+func (q *SetQueue[T]) Peek() (T, bool) {
+	return q.queue.Peek()
 }
 
 // Dequeue removes and returns the first element in the set queue.
-// It panics with an empty queue; use Length to check the length first.
 func (q *SetQueue[T]) Dequeue() T {
-	element := q.Peek()
-	delete(q.set, element)
-	if len(q.Elements) == 1 {
-		q.Elements = nil
-	} else {
-		q.Elements = q.Elements[1:]
+	elem, has := q.queue.Dequeue()
+	if has {
+		delete(q.set, elem)
 	}
-	return element
+	return elem
 }

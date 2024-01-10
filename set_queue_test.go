@@ -15,15 +15,15 @@ func TestSetQueue_NewSetQueue(t *testing.T) {
 func TestSetQueue_EnqueueAndLength(t *testing.T) {
 	queue := NewSetQueue[int]()
 	queue.Enqueue(1, 2, 3)
-	if length := queue.Length(); length != 3 {
-		t.Errorf("Length is incorrect after Enqueue. Expected: 3, Got: %d", length)
+	if length := queue.Size(); length != 3 {
+		t.Errorf("Size is incorrect after Enqueue. Expected: 3, Got: %d", length)
 	}
 }
 
 func TestSetQueue_Peek(t *testing.T) {
 	queue := NewSetQueue[int]()
 	queue.Enqueue(1, 2, 3)
-	elem := queue.Peek()
+	elem, _ := queue.Peek()
 	if elem != 1 {
 		t.Errorf("Peek is incorrect. Expected: 1, Got: %v", elem)
 	}
@@ -36,8 +36,8 @@ func TestSetQueue_Dequeue(t *testing.T) {
 	if elem != 1 {
 		t.Errorf("Dequeue is incorrect. Expected: 1, Got: %v", elem)
 	}
-	if length := queue.Length(); length != 2 {
-		t.Errorf("Length is incorrect after Dequeue. Expected: 2, Got: %d", length)
+	if length := queue.Size(); length != 2 {
+		t.Errorf("Size is incorrect after Dequeue. Expected: 2, Got: %d", length)
 	}
 }
 
@@ -54,8 +54,8 @@ func TestSetQueue_EnqueueWithDuplicates(t *testing.T) {
 	queue := NewSetQueue[int]()
 	queue.Enqueue(1, 2, 3)
 	queue.Enqueue(2, 3, 4)
-	if length := queue.Length(); length != 4 {
-		t.Errorf("Length is incorrect after Enqueue with duplicates. Expected: 4, Got: %d", length)
+	if length := queue.Size(); length != 4 {
+		t.Errorf("Size is incorrect after Enqueue with duplicates. Expected: 4, Got: %d", length)
 	}
 }
 
@@ -63,10 +63,10 @@ func TestSetQueue_Clone(t *testing.T) {
 	queue := NewSetQueue[int]()
 	queue.Enqueue(1, 2, 3)
 	clone := queue.Clone()
-	if !reflect.DeepEqual(queue.Elements, clone.Elements) {
+	if !reflect.DeepEqual(queue.queue, clone.queue) {
 		t.Error("Clone did not produce an equal SetQueue.")
 	}
-	if &queue.Elements == &clone.Elements {
+	if &queue.queue == &clone.queue {
 		t.Error("Clone should create a new instance of the Elements slice.")
 	}
 }

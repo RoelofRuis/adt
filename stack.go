@@ -1,6 +1,6 @@
 package ds
 
-// Stack is a non thread-safe LIFO structure implementation.
+// Stack is a non thread-safe stack (LIFO) implementation.
 type Stack[A any] []A
 
 // NewStack creates a new stack.
@@ -15,9 +15,9 @@ func (s *Stack[A]) Clone() *Stack[A] {
 	return &clone
 }
 
-// Push adds an item to the top of the stack.
-func (s *Stack[A]) Push(item A) {
-	*s = append(*s, item)
+// Push adds items to the top of the stack.
+func (s *Stack[A]) Push(items ...A) {
+	*s = append(*s, items...)
 }
 
 // Pop removes and returns the item from the top of the stack.
@@ -40,6 +40,11 @@ func (s *Stack[A]) Peek() (A, bool) {
 	}
 
 	return (*s)[len(*s)-1], true
+}
+
+// Reset resets the stack to an empty state.
+func (s *Stack[A]) Reset() {
+	*s = (*s)[:0]
 }
 
 // Size returns the number of elements in the stack.

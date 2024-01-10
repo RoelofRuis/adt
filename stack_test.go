@@ -1,6 +1,25 @@
 package ds
 
-import "testing"
+import (
+	"testing"
+)
+
+func TestStack_Reset(t *testing.T) {
+	stack := NewStack[int]()
+	stack.Push(1)
+	stack.Push(2)
+	stack.Push(3)
+
+	if size := stack.Size(); size != 3 {
+		t.Errorf("Expected size 3, got %d", size)
+	}
+
+	stack.Reset()
+
+	if size := stack.Size(); size != 0 {
+		t.Errorf("Expected size 0, got %d", size)
+	}
+}
 
 func TestStack(t *testing.T) {
 	// Test NewStack and Size
