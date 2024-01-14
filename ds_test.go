@@ -2,17 +2,35 @@ package ds
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
-func BenchmarkSet_Insert(b *testing.B) {
-	for _, size := range []int{100, 200, 400, 800, 1600, 3200} {
+func BenchmarkHeap_Push(b *testing.B) {
+	for _, size := range []int{1000, 2000, 4000, 8000, 16000, 32000} {
 		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
+			heap := NewHeap[int](intComparator)
+			for j := 0; j < size; j++ {
+				heap.Push(rand.Int())
+			}
+			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				set := NewSet[int]()
-				for j := 0; j < size; j++ {
-					set.Insert(j)
-				}
+				heap.Push(i)
+			}
+		})
+	}
+}
+
+func BenchmarkHeap_Pop(b *testing.B) {
+	for _, size := range []int{1000, 2000, 4000, 8000, 16000, 32000} {
+		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
+			heap := NewHeap[int](intComparator)
+			for j := 0; j < size; j++ {
+				heap.Push(rand.Int())
+			}
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				heap.Pop()
 			}
 		})
 	}
