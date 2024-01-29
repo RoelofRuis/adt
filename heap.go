@@ -1,10 +1,6 @@
 package ds
 
-// Comparator is a function that defines the ordering of elements in the heap.
-// It returns true if the first element should be ordered before the second.
-type Comparator[A any] func(a, b A) bool
-
-// Heap is a generic heap data structur containing elements of any type A.
+// Heap is a generic heap data structure containing elements of any type A.
 // Heap ordering is maintained using the given Comparator.
 type Heap[A any] struct {
 	elements   []A
@@ -60,7 +56,7 @@ func (h *Heap[A]) Size() int {
 func (h *Heap[A]) up(index int) {
 	for {
 		parentIndex := (index - 1) / 2
-		if index == 0 || h.comparator(h.elements[parentIndex], h.elements[index]) {
+		if index == 0 || h.comparator(h.elements[parentIndex], h.elements[index]) < 0 {
 			break
 		}
 		h.swap(index, parentIndex)
@@ -75,10 +71,10 @@ func (h *Heap[A]) down(index int) {
 		leftChildIndex := 2*index + 1
 		rightChildIndex := 2*index + 2
 		smallestIndex := index
-		if leftChildIndex < n && h.comparator(h.elements[leftChildIndex], h.elements[smallestIndex]) {
+		if leftChildIndex < n && h.comparator(h.elements[leftChildIndex], h.elements[smallestIndex]) < 0 {
 			smallestIndex = leftChildIndex
 		}
-		if rightChildIndex < n && h.comparator(h.elements[rightChildIndex], h.elements[smallestIndex]) {
+		if rightChildIndex < n && h.comparator(h.elements[rightChildIndex], h.elements[smallestIndex]) < 0 {
 			smallestIndex = rightChildIndex
 		}
 
