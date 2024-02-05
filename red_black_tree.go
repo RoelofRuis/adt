@@ -7,16 +7,17 @@ const (
 )
 
 // RedBlackTreeNode represents a node in a red-black tree.
-type RedBlackTreeNode[A any] struct {
-	Value  A
+type RedBlackTreeNode[K any, V any] struct {
+	Key    K
+	Value  V
 	Color  bool
-	Left   *RedBlackTreeNode[A]
-	Right  *RedBlackTreeNode[A]
-	Parent *RedBlackTreeNode[A]
+	Left   *RedBlackTreeNode[K, V]
+	Right  *RedBlackTreeNode[K, V]
+	Parent *RedBlackTreeNode[K, V]
 }
 
 // isRed returns whether the node color is red.
-func (n *RedBlackTreeNode[A]) isRed() bool {
+func (n *RedBlackTreeNode[K, V]) isRed() bool {
 	if n == nil {
 		return BLACK
 	}
@@ -24,32 +25,32 @@ func (n *RedBlackTreeNode[A]) isRed() bool {
 }
 
 // RedBlackTree represents a non thread-safe generic red-black tree.
-type RedBlackTree[A any] struct {
-	Root       *RedBlackTreeNode[A]
-	Comparator Comparator[A]
+type RedBlackTree[K any, V any] struct {
+	Root       *RedBlackTreeNode[K, V]
+	Comparator Comparator[K]
 }
 
 // NewRedBlackTree creates a new red-black tree that uses the given Comparator.
-func NewRedBlackTree[A any](comparator Comparator[A]) *RedBlackTree[A] {
-	return &RedBlackTree[A]{
+func NewRedBlackTree[K any, V any](comparator Comparator[K]) *RedBlackTree[K, V] {
+	return &RedBlackTree[K, V]{
 		Root:       nil,
 		Comparator: comparator,
 	}
 }
 
 // Insert inserts a new value into the red-black tree.
-func (t *RedBlackTree[A]) Insert(value A) {
-	newNode := &RedBlackTreeNode[A]{Value: value, Color: RED}
+func (t *RedBlackTree[K, V]) Insert(key K, value V) {
+	newNode := &RedBlackTreeNode[K, V]{Key: key, Value: value, Color: RED}
 
 	if t.Root == nil {
 		t.Root = newNode
 	} else {
 		current := t.Root
-		var parent *RedBlackTreeNode[A]
+		var parent *RedBlackTreeNode[K, V]
 
 		for current != nil {
 			parent = current
-			compResult := t.Comparator(value, current.Value)
+			compResult := t.Comparator(key, current.Key)
 			if compResult == 0 {
 				return
 			} else if compResult < 0 {
@@ -60,7 +61,7 @@ func (t *RedBlackTree[A]) Insert(value A) {
 		}
 
 		newNode.Parent = parent
-		if t.Comparator(value, parent.Value) < 0 {
+		if t.Comparator(key, parent.Key) < 0 {
 			parent.Left = newNode
 		} else {
 			parent.Right = newNode
@@ -71,14 +72,14 @@ func (t *RedBlackTree[A]) Insert(value A) {
 }
 
 // TraverseInOrder performs an in-order traversal of the tree, applying the given function to each node.
-func (t *RedBlackTree[A]) TraverseInOrder(f func(A)) {
-	var inOrder func(node *RedBlackTreeNode[A])
-	inOrder = func(node *RedBlackTreeNode[A]) {
+func (t *RedBlackTree[K, V]) TraverseInOrder(f func(K)) {
+	var inOrder func(node *RedBlackTreeNode[K, V])
+	inOrder = func(node *RedBlackTreeNode[K, V]) {
 		if node == nil {
 			return
 		}
 		inOrder(node.Left)
-		f(node.Value)
+		f(node.Key)
 		inOrder(node.Right)
 	}
 
@@ -86,7 +87,7 @@ func (t *RedBlackTree[A]) TraverseInOrder(f func(A)) {
 }
 
 // rotateLeft performs a left rotation around the given node.
-func (t *RedBlackTree[A]) rotateLeft(x *RedBlackTreeNode[A]) {
+func (t *RedBlackTree[K, V]) rotateLeft(x *RedBlackTreeNode[K, V]) {
 	y := x.Right
 	x.Right = y.Left
 	if y.Left != nil {
@@ -105,7 +106,7 @@ func (t *RedBlackTree[A]) rotateLeft(x *RedBlackTreeNode[A]) {
 }
 
 // rotateRight performs a right rotation around the given node.
-func (t *RedBlackTree[A]) rotateRight(x *RedBlackTreeNode[A]) {
+func (t *RedBlackTree[K, V]) rotateRight(x *RedBlackTreeNode[K, V]) {
 	y := x.Left
 	x.Left = y.Right
 	if y.Right != nil {
@@ -124,7 +125,7 @@ func (t *RedBlackTree[A]) rotateRight(x *RedBlackTreeNode[A]) {
 }
 
 // insertFixup fixes up the tree after an insertion to maintain red-black properties.
-func (t *RedBlackTree[A]) insertFixup(z *RedBlackTreeNode[A]) {
+func (t *RedBlackTree[K, V]) insertFixup(z *RedBlackTreeNode[K, V]) {
 	for z.Parent.isRed() {
 		if z.Parent == z.Parent.Parent.Left {
 			y := z.Parent.Parent.Right
