@@ -8,7 +8,7 @@ import (
 
 // TestBinaryTree_Insert tests the Insert method to ensure it properly adds elements.
 func TestBinaryTree_Insert(t *testing.T) {
-	bt := NewBinaryTree(CompareInt)
+	bt := NewBinarySearchTree(CompareInt)
 
 	values := []int{10, 5, 15, 10, 5, 15}
 	for _, v := range values {
@@ -30,7 +30,7 @@ func TestBinaryTree_Insert(t *testing.T) {
 
 // TestBinaryTree_InOrderTraversal tests the InOrderTraversal method by comparing the output to a known sorted order.
 func TestBinaryTree_InOrderTraversal(t *testing.T) {
-	bt := NewBinaryTree(CompareInt)
+	bt := NewBinarySearchTree(CompareInt)
 
 	values := []int{5, 3, 8, 1, 4, 7, 9}
 	for _, v := range values {

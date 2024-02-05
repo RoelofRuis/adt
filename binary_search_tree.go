@@ -7,22 +7,22 @@ type TreeNode[A any] struct {
 	Right *TreeNode[A]
 }
 
-// BinaryTree is an unbalanced binary tree.
-type BinaryTree[A any] struct {
+// BinarySearchTree is an unbalanced binary tree.
+type BinarySearchTree[A any] struct {
 	Root       *TreeNode[A]
 	Comparator Comparator[A]
 }
 
-// NewBinaryTree creates a new BinaryTree that will use the given Comparator to order its nodes.
-func NewBinaryTree[A any](comparator Comparator[A]) *BinaryTree[A] {
-	return &BinaryTree[A]{
+// NewBinarySearchTree creates a new BinarySearchTree that will use the given Comparator to order its nodes.
+func NewBinarySearchTree[A any](comparator Comparator[A]) *BinarySearchTree[A] {
+	return &BinarySearchTree[A]{
 		Root:       nil,
 		Comparator: comparator,
 	}
 }
 
 // Insert adds a new node with the specified value into the tree based on the Comparator.
-func (t *BinaryTree[A]) Insert(value A) {
+func (t *BinarySearchTree[A]) Insert(value A) {
 	newNode := &TreeNode[A]{Value: value}
 
 	if t.Root == nil {
@@ -50,7 +50,7 @@ func (t *BinaryTree[A]) Insert(value A) {
 }
 
 // TraverseInOrder performs an in-order traversal of the tree, applying the given function to each node.
-func (t *BinaryTree[A]) TraverseInOrder(f func(A)) {
+func (t *BinarySearchTree[A]) TraverseInOrder(f func(A)) {
 	var inOrder func(node *TreeNode[A])
 	inOrder = func(node *TreeNode[A]) {
 		if node == nil {
