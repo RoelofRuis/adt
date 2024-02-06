@@ -4,7 +4,7 @@ package ds
 // It returns an int indicating the ordering: negative if a < b, zero if a == b, and positive if a > b.
 type Comparator[A any] func(a, b A) int
 
-// CompareInt defines the default integer comparison.
+// CompareInt implements a Comparator for int.
 func CompareInt(a, b int) int {
 	return a - b
 }
