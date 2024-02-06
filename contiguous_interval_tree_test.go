@@ -6,45 +6,45 @@ import (
 	"testing"
 )
 
-func TestConterminousIntervalTree_Insert(t *testing.T) {
+func TestContiguousIntervalTree_Insert(t *testing.T) {
 	tests := []struct {
 		name     string
-		values   []Interval
+		values   []Interval[int]
 		expected string
 	}{
 		{
 			"empty",
-			[]Interval{},
+			[]Interval[int]{},
 			"",
 		},
 		{
 			"single node",
-			[]Interval{{1, 100}},
+			[]Interval[int]{{1, 100}},
 			"{1 100}",
 		},
 		{
 			"zero width intervals stack",
-			[]Interval{{1, 1}, {1, 1}},
+			[]Interval[int]{{1, 1}, {1, 1}},
 			"{1 1} {1 1}",
 		},
 		{
 			"zero width interval cannot intersect interval",
-			[]Interval{{1, 3}, {2, 2}, {3, 3}, {1, 1}},
+			[]Interval[int]{{1, 3}, {2, 2}, {3, 3}, {1, 1}},
 			"{1 1} {1 3} {3 3}",
 		},
 		{
 			"interval cannot overlap zero width interval",
-			[]Interval{{2, 2}, {3, 3}, {1, 1}, {1, 3}},
+			[]Interval[int]{{2, 2}, {3, 3}, {1, 1}, {1, 3}},
 			"{1 1} {1 2} {2 2} {2 3} {3 3}",
 		},
 		{
-			"conterminous traversal: intervals are added between",
-			[]Interval{{9, 10}, {1, 4}},
+			"contiguous traversal: intervals are added between",
+			[]Interval[int]{{9, 10}, {1, 4}},
 			"{1 4} {4 9} {9 10}",
 		},
 		{
 			"intervals cannot overlap",
-			[]Interval{
+			[]Interval[int]{
 				{5, 10},
 				{2, 6},
 				{8, 14},
@@ -55,7 +55,7 @@ func TestConterminousIntervalTree_Insert(t *testing.T) {
 		},
 		{
 			"intervals are traversed in sorted order",
-			[]Interval{
+			[]Interval[int]{
 				{6, 9},
 				{1, 2},
 				{3, 4},
@@ -69,14 +69,14 @@ func TestConterminousIntervalTree_Insert(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			it := NewConterminousIntervalTree()
+			it := NewContiguousIntervalTree[int](CompareInt)
 
 			for _, v := range tt.values {
 				it.Insert(v)
 			}
 
 			var sb strings.Builder
-			it.TraverseInOrder(func(value Interval) {
+			it.TraverseInOrder(func(value Interval[int]) {
 				fmt.Fprint(&sb, value, " ")
 			})
 			got := strings.TrimSpace(sb.String())
