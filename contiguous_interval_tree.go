@@ -33,6 +33,13 @@ func (n *ContiguousIntervalNode[K, V]) size() int {
 	return n.Left.size() + n.Right.size() + 1
 }
 
+func (n *ContiguousIntervalNode[K, V]) alphaBalanced(a float64) bool {
+	left := float64(n.Left.size())
+	right := float64(n.Right.size())
+	alpha := a * float64(left+right+1)
+	return left <= alpha && right <= alpha
+}
+
 // Insert inserts an interval into the tree. If the interval overlaps with an existing interval, this operation fails
 // and returns false.
 func (t *ContiguousIntervalTree[K, V]) Insert(i Interval[K], value V) bool {

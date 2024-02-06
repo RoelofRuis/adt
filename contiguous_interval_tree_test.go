@@ -148,3 +148,25 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 		t.Errorf("expected 4 intervals, got %d", it.NumIntervals())
 	}
 }
+
+func TestContiguousIntervalTree_Rebalance(t *testing.T) {
+	it := NewContiguousIntervalTree[int, string](CompareInt)
+
+	it.Insert(Interval[int]{1, 2}, "data")
+	it.Insert(Interval[int]{2, 3}, "data")
+	it.Insert(Interval[int]{3, 4}, "data")
+	it.Insert(Interval[int]{4, 5}, "data")
+	it.Insert(Interval[int]{5, 6}, "data")
+	it.Insert(Interval[int]{6, 7}, "data")
+
+	showTree(it.Root, 0)
+}
+
+func showTree(n *ContiguousIntervalNode[int, string], depth int) {
+	if n == nil {
+		return
+	}
+	showTree(n.Left, depth+1)
+	fmt.Printf("%s%v (%v)\n", strings.Repeat("  ", depth), n.Interval, n.alphaBalanced(0.5))
+	showTree(n.Right, depth+1)
+}
