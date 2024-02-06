@@ -1,5 +1,22 @@
 package ds
 
+// ContiguousIntervalTree is a non thread-save binary search tree storing contiguous intervals. This means that the
+// intervals are always directly following each other without overlap.
+// The special case are intervals with zero length, of which an unlimited number may be added.
+// When iterating the tree, it will also return the empty intervals formed by the space in between inserted elements.
+type ContiguousIntervalTree[K any, V any] struct {
+	Comparator Comparator[K]
+	Root       *ContiguousIntervalNode[K, V]
+}
+
+// NewContiguousIntervalTree creates a new tree for the given key type K, capable of storing values of type V.
+func NewContiguousIntervalTree[K any, V any](comparator Comparator[K]) *ContiguousIntervalTree[K, V] {
+	return &ContiguousIntervalTree[K, V]{
+		Root:       nil,
+		Comparator: comparator,
+	}
+}
+
 // ContiguousIntervalNode is internally used in the ContiguousIntervalTree to store its data.
 type ContiguousIntervalNode[K any, V any] struct {
 	Interval Interval[K]
@@ -14,22 +31,6 @@ func (n *ContiguousIntervalNode[K, V]) size() int {
 		return 0
 	}
 	return n.Left.size() + n.Right.size() + 1
-}
-
-// ContiguousIntervalTree stores contiguous intervals, meaning that the intervals are always directly following each
-// other without overlap. The special case are intervals with zero length, of which an unlimited number may be added.
-// When iterating the tree, it will also return the empty intervals formed by the space in between inserted
-// elements.
-type ContiguousIntervalTree[K any, V any] struct {
-	Comparator Comparator[K]
-	Root       *ContiguousIntervalNode[K, V]
-}
-
-func NewContiguousIntervalTree[K any, V any](comparator Comparator[K]) *ContiguousIntervalTree[K, V] {
-	return &ContiguousIntervalTree[K, V]{
-		Root:       nil,
-		Comparator: comparator,
-	}
 }
 
 // Insert inserts an interval into the tree. If the interval overlaps with an existing interval, this operation fails
