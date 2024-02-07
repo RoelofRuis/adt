@@ -1,5 +1,23 @@
 package ds
 
+type Interval[A any] interface {
+	Start() A
+	End() A
+}
+
+type SimpleInterval[A any] struct {
+	start A
+	end   A
+}
+
+func (s SimpleInterval[A]) Start() A {
+	return s.start
+}
+
+func (s SimpleInterval[A]) End() A {
+	return s.end
+}
+
 // ContiguousIntervalTree is a non thread-save binary search tree storing contiguous intervals. This means that the
 // intervals are always directly following each other without overlap.
 // The special case are intervals with zero length, of which an unlimited number may be added.
@@ -52,8 +70,8 @@ func (t *ContiguousIntervalTree[K, V]) Insert(i Interval[K], value V) bool {
 
 	currentNode := t.Root
 	for {
-		if t.Comparator(i.Start, currentNode.Interval.Start) <= 0 {
-			if t.Comparator(i.End, currentNode.Interval.Start) > 0 {
+		if t.Comparator(i.Start(), currentNode.Interval.Start()) <= 0 {
+			if t.Comparator(i.End(), currentNode.Interval.Start()) > 0 {
 				return false // overlap
 			}
 			if currentNode.Left == nil {
@@ -61,7 +79,7 @@ func (t *ContiguousIntervalTree[K, V]) Insert(i Interval[K], value V) bool {
 				return true
 			}
 			currentNode = currentNode.Left
-		} else if t.Comparator(i.Start, currentNode.Interval.End) >= 0 {
+		} else if t.Comparator(i.Start(), currentNode.Interval.End()) >= 0 {
 			if currentNode.Right == nil {
 				currentNode.Right = newNode
 				return true
@@ -92,7 +110,7 @@ func (t *ContiguousIntervalTree[K, V]) NumIntervals() int {
 // TraverseInOrder visits the intervals in order, including the empty intervals formed by the space in between inserted
 // elements.
 func (t *ContiguousIntervalTree[K, V]) TraverseInOrder(f func(interval Interval[K], value V)) {
-	var lastInterval *Interval[K]
+	var lastInterval Interval[K]
 
 	var inOrder func(node *ContiguousIntervalNode[K, V])
 	inOrder = func(node *ContiguousIntervalNode[K, V]) {
@@ -101,14 +119,14 @@ func (t *ContiguousIntervalTree[K, V]) TraverseInOrder(f func(interval Interval[
 		}
 		inOrder(node.Left)
 
-		if lastInterval != nil && t.Comparator(lastInterval.End, node.Interval.Start) < 0 {
+		if lastInterval != nil && t.Comparator(lastInterval.End(), node.Interval.Start()) < 0 {
 			var zero V
-			f(Interval[K]{lastInterval.End, node.Interval.Start}, zero)
+			f(SimpleInterval[K]{lastInterval.End(), node.Interval.Start()}, zero)
 		}
 
 		f(node.Interval, node.Value)
 
-		lastInterval = &node.Interval
+		lastInterval = node.Interval
 		inOrder(node.Right)
 	}
 

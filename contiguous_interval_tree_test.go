@@ -9,42 +9,42 @@ import (
 func TestContiguousIntervalTree_Insert(t *testing.T) {
 	tests := []struct {
 		name     string
-		values   []Interval[int]
+		values   []SimpleInterval[int]
 		expected string
 	}{
 		{
 			"empty",
-			[]Interval[int]{},
+			[]SimpleInterval[int]{},
 			"",
 		},
 		{
 			"single node",
-			[]Interval[int]{{1, 100}},
+			[]SimpleInterval[int]{{1, 100}},
 			"{1 100}:data",
 		},
 		{
 			"zero width intervals stack",
-			[]Interval[int]{{1, 1}, {1, 1}},
+			[]SimpleInterval[int]{{1, 1}, {1, 1}},
 			"{1 1}:data {1 1}:data",
 		},
 		{
 			"zero width interval cannot intersect interval",
-			[]Interval[int]{{1, 3}, {2, 2}, {3, 3}, {1, 1}},
+			[]SimpleInterval[int]{{1, 3}, {2, 2}, {3, 3}, {1, 1}},
 			"{1 1}:data {1 3}:data {3 3}:data",
 		},
 		{
 			"interval cannot overlap zero width interval",
-			[]Interval[int]{{2, 2}, {3, 3}, {1, 1}, {1, 3}},
+			[]SimpleInterval[int]{{2, 2}, {3, 3}, {1, 1}, {1, 3}},
 			"{1 1}:data {1 2}: {2 2}:data {2 3}: {3 3}:data",
 		},
 		{
 			"contiguous traversal: intervals are added between",
-			[]Interval[int]{{9, 10}, {1, 4}},
+			[]SimpleInterval[int]{{9, 10}, {1, 4}},
 			"{1 4}:data {4 9}: {9 10}:data",
 		},
 		{
 			"intervals cannot overlap",
-			[]Interval[int]{
+			[]SimpleInterval[int]{
 				{5, 10},
 				{2, 6},
 				{8, 14},
@@ -55,7 +55,7 @@ func TestContiguousIntervalTree_Insert(t *testing.T) {
 		},
 		{
 			"intervals are traversed in sorted order",
-			[]Interval[int]{
+			[]SimpleInterval[int]{
 				{6, 9},
 				{1, 2},
 				{3, 4},
@@ -99,7 +99,7 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 	}
 
 	// insert single interval
-	it.Insert(Interval[int]{1, 4}, "data")
+	it.Insert(SimpleInterval[int]{1, 4}, "data")
 
 	if it.Size() != 1 {
 		t.Errorf("expected tree of size 1, got %d", it.Size())
@@ -109,7 +109,7 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 	}
 
 	// insert non-touching interval
-	it.Insert(Interval[int]{8, 12}, "data")
+	it.Insert(SimpleInterval[int]{8, 12}, "data")
 
 	if it.Size() != 2 {
 		t.Errorf("expected tree of size 2, got %d", it.Size())
@@ -119,7 +119,7 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 	}
 
 	// insert touching interval
-	it.Insert(Interval[int]{12, 14}, "data")
+	it.Insert(SimpleInterval[int]{12, 14}, "data")
 
 	if it.Size() != 3 {
 		t.Errorf("expected tree of size 3, got %d", it.Size())
@@ -129,7 +129,7 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 	}
 
 	// insert filling interval
-	it.Insert(Interval[int]{4, 8}, "data")
+	it.Insert(SimpleInterval[int]{4, 8}, "data")
 
 	if it.Size() != 4 {
 		t.Errorf("expected tree of size 4, got %d", it.Size())
@@ -139,7 +139,7 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 	}
 
 	// insert overlapping interval
-	it.Insert(Interval[int]{6, 10}, "data")
+	it.Insert(SimpleInterval[int]{6, 10}, "data")
 
 	if it.Size() != 4 {
 		t.Errorf("expected tree of size 4, got %d", it.Size())
@@ -152,12 +152,12 @@ func TestContiguousIntervalTree_SizeAndNumIntervals(t *testing.T) {
 func TestContiguousIntervalTree_Rebalance(t *testing.T) {
 	it := NewContiguousIntervalTree[int, string](CompareInt)
 
-	it.Insert(Interval[int]{1, 2}, "data")
-	it.Insert(Interval[int]{2, 3}, "data")
-	it.Insert(Interval[int]{3, 4}, "data")
-	it.Insert(Interval[int]{4, 5}, "data")
-	it.Insert(Interval[int]{5, 6}, "data")
-	it.Insert(Interval[int]{6, 7}, "data")
+	it.Insert(SimpleInterval[int]{1, 2}, "data")
+	it.Insert(SimpleInterval[int]{2, 3}, "data")
+	it.Insert(SimpleInterval[int]{3, 4}, "data")
+	it.Insert(SimpleInterval[int]{4, 5}, "data")
+	it.Insert(SimpleInterval[int]{5, 6}, "data")
+	it.Insert(SimpleInterval[int]{6, 7}, "data")
 
 	showTree(it.Root, 0)
 }
