@@ -91,9 +91,52 @@ func (t *ContiguousIntervalTree[K, V]) Insert(i Interval[K], value V) bool {
 	}
 }
 
+func (t *ContiguousIntervalTree[K, V]) Find(point K) bool {
+	return t.search(point) != nil
+}
+
+// search finds the node that contains a given point K
+func (t *ContiguousIntervalTree[K, V]) search(point K) *ContiguousIntervalNode[K, V] {
+	if t.Root == nil {
+		return nil
+	}
+
+	sum := 0
+	height := 0
+	currentNode := t.Root
+	for {
+		if t.Comparator(point, currentNode.Interval.Start()) < 0 {
+			if currentNode.Left == nil {
+				if -sum == height {
+					return nil
+				}
+				return &ContiguousIntervalNode[K, V]{}
+			}
+			currentNode = currentNode.Left
+			sum -= 1
+			height += 1
+		} else if t.Comparator(point, currentNode.Interval.End()) > 0 {
+			if currentNode.Right == nil {
+				if sum == height {
+					return nil
+				}
+				return &ContiguousIntervalNode[K, V]{}
+			}
+			currentNode = currentNode.Right
+			sum += 1
+			height += 1
+		} else {
+			return currentNode
+		}
+	}
+}
+
 // Size returns the number of nodes in the tree.
 // This might be less than the number of contiguous intervals expressed by this tree. To get that, use NumIntervals.
 func (t *ContiguousIntervalTree[K, V]) Size() int {
+	if t.Root == nil {
+		return 0
+	}
 	return t.Root.size()
 }
 
@@ -131,4 +174,8 @@ func (t *ContiguousIntervalTree[K, V]) TraverseInOrder(f func(interval Interval[
 	}
 
 	inOrder(t.Root)
+}
+
+func (t *ContiguousIntervalTree[K, V]) TraverseBetween(start, end Interval[K], f func(interval Interval[K], value V)) {
+	// TODO: implement
 }

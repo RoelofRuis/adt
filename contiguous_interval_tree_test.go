@@ -162,6 +162,32 @@ func TestContiguousIntervalTree_Rebalance(t *testing.T) {
 	showTree(it.Root, 0)
 }
 
+func TestContiguousIntervalTree_Find(t *testing.T) {
+	it := NewContiguousIntervalTree[int, string](CompareInt)
+
+	if it.Find(0) || it.Find(1) || it.Find(2) || it.Find(3) || it.Find(4) {
+		t.Errorf("did not expect to find 0, 1, 2, 3 or 4")
+	}
+
+	it.Insert(SimpleInterval[int]{1, 3}, "data")
+
+	if it.Find(0) || it.Find(4) {
+		t.Errorf("did not expect to find 0 or 4")
+	}
+	if !it.Find(1) || !it.Find(2) || !it.Find(3) {
+		t.Errorf("did expect to find 1, 2 and 3")
+	}
+
+	it.Insert(SimpleInterval[int]{6, 8}, "data")
+
+	if it.Find(0) || it.Find(9) {
+		t.Errorf("did not expect to find 0 or 9")
+	}
+	if !it.Find(2) || !it.Find(5) || !it.Find(7) {
+		t.Errorf("did expect to find 2, 5 and 7")
+	}
+}
+
 func showTree(n *ContiguousIntervalNode[int, string], depth int) {
 	if n == nil {
 		return
